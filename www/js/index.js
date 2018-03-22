@@ -17,12 +17,12 @@ function crearNota() {
 
     notaSend = div;
 
-    sendNotaAjax();
+    var id = sendNotaAjax();
 
-    var editar = $("<div class='btn btn-warning editar'>editar</div>");
+    var editar = $("<div class='btn btn-warning editar' id='" + id + "'>editar</div>");
     editar.click(edit);
 
-    var eliminar = $("<div class='btn btn-danger delete'>eliminar</div>");
+    var eliminar = $("<div class='btn btn-danger delete' id='" + id + "'>eliminar</div>");
     eliminar.click(remove);
 
     div.append(editar);
@@ -47,6 +47,8 @@ function sendNotaAjax(){
         success: function (respJSON) {
             var codi = respJSON.nombre;
             $("#respAjax").html(codi+" Longitud:"+respJSON.longitud);
+
+            return respJSON
         }
     });
 }
@@ -99,9 +101,26 @@ function removeNota(id){
     });
 }
 
+function updateNota(id, send){
+
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        contentType:"text/plain",
+        data: {nota: send},
+        url: "http://localhost:8080/update/"+id,
+        beforeSend: function () {
+            $("#respAjax").html('Connecting...');
+        },
+        success: function (respJSON) {
+            console.log(respJSON[0])
+        }
+    });
+}
+
 function remove() {
     console.log(this.getAttribute("id"));
-    removeNota($(this).attr("id"));
+    removeNota(this.getAttribute("id"));
 
     $(this).parent("div").remove();
     $(this).remove();
@@ -109,5 +128,8 @@ function remove() {
 }
 
 function edit() {
+
+
+
     console.log("editar");
 }
